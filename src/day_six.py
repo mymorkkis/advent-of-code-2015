@@ -3,16 +3,14 @@ from typing import List, Tuple, NamedTuple
 
 Grid = List[List[int]]
 
-ON, OFF = True, False
-
 
 class Coords(NamedTuple):
     x: int
     y: int
 
 
-def lights_turned_on_in_grid(grid: Grid) -> int:
-    return sum(light for row in grid for light in row if light is ON)
+def total_brightness_of_grid_lights(grid: Grid) -> int:
+    return sum(light_brightness for row in grid for light_brightness in row)
 
 
 def switch_lights_on_grid(grid: Grid, instructions: List[str]) -> None:
@@ -28,9 +26,14 @@ def _switch_lights(grid: Grid, action: str, from_coords: Coords, to_coords: Coor
     )
     for coords in coords_of_lights_to_switch:
         if action == 'toggle':
-            grid[coords.x][coords.y] = not grid[coords.x][coords.y]
+            grid[coords.x][coords.y] += 2
         else:
-            grid[coords.x][coords.y] = ON if action == 'on' else OFF
+            light_brightness = grid[coords.x][coords.y]
+            if action == 'on':
+                light_brightness += 1
+            if action == 'off' and light_brightness:
+                light_brightness -= 1
+            grid[coords.x][coords.y] = light_brightness
 
 
 def _parse_instructions(instruction: str) -> Tuple[str, Coords, Coords]:
